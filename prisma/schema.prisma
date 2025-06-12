@@ -54,16 +54,23 @@ model Teacher {
 }
 
 model Parent {
-  id        String    @id
-  username  String    @unique
+  id        String   @id @default(cuid())
+  username  String   @unique
   name      String
   surname   String
-  email     String?   @unique
-  phone     String    @unique
-  address   String
-  createdAt DateTime  @default(now())
-  students  Student[]
+  email     String   @unique
+  phone     String?
+  address   String?
+  sex       UserSex  
+  birthday  DateTime
+  img       String?  
+  userId    String?  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  students  Student[] // One parent can have many students
 }
+
 
 model Grade {
   id    Int @id @default(autoincrement())

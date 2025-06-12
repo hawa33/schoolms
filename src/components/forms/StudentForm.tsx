@@ -5,22 +5,11 @@ import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import {
-  studentSchema,
-  StudentSchema,
-  teacherSchema,
-  TeacherSchema,
-} from "@/lib/formValidationSchemas";
+import { studentSchema, StudentSchema } from "@/lib/formValidationSchemas";
 import { useFormState } from "react-dom";
-import {
-  createStudent,
-  createTeacher,
-  updateStudent,
-  updateTeacher,
-} from "@/lib/actions";
+import { createStudent, updateStudent } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { CldUploadWidget } from "next-cloudinary";
 
 const StudentForm = ({
   type,
@@ -41,7 +30,7 @@ const StudentForm = ({
     resolver: zodResolver(studentSchema),
   });
 
-  const [img, setImg] = useState<any>();
+  const [img, setImg] = useState<string>(data?.img || "");
 
   const [state, formAction] = useFormState(
     type === "create" ? createStudent : updateStudent,
@@ -51,10 +40,9 @@ const StudentForm = ({
     }
   );
 
-  const onSubmit = handleSubmit((data) => {
-    console.log("hello");
-    console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+  const onSubmit = handleSubmit((formData) => {
+    console.log(formData);
+    formAction({ ...formData, img: img });
   });
 
   const router = useRouter();
@@ -77,6 +65,7 @@ const StudentForm = ({
       <span className="text-xs text-gray-400 font-medium">
         Authentication Information
       </span>
+
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="Username"
@@ -101,28 +90,11 @@ const StudentForm = ({
           error={errors?.password}
         />
       </div>
+
       <span className="text-xs text-gray-400 font-medium">
         Personal Information
       </span>
-      <CldUploadWidget
-        uploadPreset="school"
-        onSuccess={(result, { widget }) => {
-          setImg(result.info);
-          widget.close();
-        }}
-      >
-        {({ open }) => {
-          return (
-            <div
-              className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
-              onClick={() => open()}
-            >
-              <Image src="/upload.png" alt="" width={28} height={28} />
-              <span>Upload a photo</span>
-            </div>
-          );
-        }}
-      </CldUploadWidget>
+
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="First Name"
@@ -162,7 +134,7 @@ const StudentForm = ({
         <InputField
           label="Birthday"
           name="birthday"
-          defaultValue={data?.birthday.toISOString().split("T")[0]}
+          defaultValue={data?.birthday?.toISOString().split("T")[0]}
           register={register}
           error={errors.birthday}
           type="date"
@@ -184,6 +156,7 @@ const StudentForm = ({
             hidden
           />
         )}
+
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Sex</label>
           <select
@@ -200,6 +173,7 @@ const StudentForm = ({
             </p>
           )}
         </div>
+
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Grade</label>
           <select
@@ -219,6 +193,7 @@ const StudentForm = ({
             </p>
           )}
         </div>
+
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Class</label>
           <select
@@ -247,7 +222,40 @@ const StudentForm = ({
             </p>
           )}
         </div>
+
+        {/* File upload same as TeacherForm */}
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setImg(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          />
+          {img && (
+            <div className="mt-2">
+              <Image
+                src={img}
+                alt="Student photo"
+                width={100}
+                height={100}
+                className="object-cover rounded-lg"
+              />
+              <p className="text-xs text-green-600 mt-1">Photo selected</p>
+            </div>
+          )}
+        </div>
       </div>
+
       {state.error && (
         <span className="text-red-500">Something went wrong!</span>
       )}

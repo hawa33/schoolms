@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   ClassSchema,
   ExamSchema,
+  ParentSchema,
   StudentSchema,
   SubjectSchema,
   TeacherSchema,
@@ -157,10 +158,9 @@ export const createTeacher = async (
         name: data.name,
         surname: data.surname,
         email: data.email || null,
-        phone: data.phone || null,
+        phone: data.phone ?? undefined,
         address: data.address,
         img: data.img || null,
-        bloodType: data.bloodType,
         sex: data.sex,
         birthday: data.birthday,
         subjects: {
@@ -204,7 +204,7 @@ export const updateTeacher = async (
         name: data.name,
         surname: data.surname,
         email: data.email || null,
-        phone: data.phone || null,
+        phone: data.phone ?? undefined,
         address: data.address,
         img: data.img || null,
         bloodType: data.bloodType,
@@ -463,6 +463,82 @@ export const deleteExam = async (
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
+    return { success: false, error: true };
+  }
+};
+export const createParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  try {
+    const user = await clerkClient.users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata: { role: "parent" },
+    });
+
+    await prisma.parent.create({
+      data: {
+        id: user.id,
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone || null,
+        address: data.address,
+        img: data.img || null,
+        bloodType: data.bloodType,
+        sex: data.sex,
+        birthday: data.birthday,
+      },
+    });
+
+    // revalidatePath("/list/parents");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error("Failed to create parent:", err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  try {
+    await clerkClient.users.updateUser(data.id, {
+      username: data.username,
+      ...(data.password !== "" && { password: data.password }),
+      firstName: data.name,
+      lastName: data.surname,
+    });
+
+   await prisma.parent.update({
+  where: { id: data.id },
+  data: {
+    ...(data.password !== "" && { password: data.password }),
+    username: data.username,
+    name: data.name,
+    surname: data.surname,
+    email: data.email || undefined,
+    phone: data.phone || undefined,
+    address: data.address,
+    bloodType: data.bloodType,
+    sex: data.sex,
+    birthday: data.birthday,
+  },
+});
+
+    // revalidatePath("/list/parents");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error("Failed to update parent:", err);
     return { success: false, error: true };
   }
 };
