@@ -160,13 +160,13 @@ const SingleStudentPage = async ({
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
             <Link
-              className="p-3 rounded-md bg-lamaSkyLight"
+              className="p-3 rounded-md bg-SanSkyLight"
               href={`/list/lessons?classId=${student.class.id}`}
             >
               Student&apos;s Lessons
             </Link>
             <Link
-              className="p-3 rounded-md bg-lamaPurpleLight"
+              className="p-3 rounded-md bg-SanPurpleLight"
               href={`/list/teachers?classId=${student.class.id}`}
             >
               Student&apos;s Teachers
@@ -178,13 +178,13 @@ const SingleStudentPage = async ({
               Student&apos;s Exams
             </Link>
             <Link
-              className="p-3 rounded-md bg-lamaSkyLight"
+              className="p-3 rounded-md bg-SanSkyLight"
               href={`/list/assignments?classId=${student.class.id}`}
             >
               Student&apos;s Assignments
             </Link>
             <Link
-              className="p-3 rounded-md bg-lamaYellowLight"
+              className="p-3 rounded-md bg-SanYellowLight"
               href={`/list/results?studentId=${student.id}`}
             >
               Student&apos;s Results

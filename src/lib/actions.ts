@@ -161,6 +161,7 @@ export const createTeacher = async (
         phone: data.phone ?? undefined,
         address: data.address,
         img: data.img || null,
+        bloodType: data.bloodType,
         sex: data.sex,
         birthday: data.birthday,
         subjects: {
@@ -277,7 +278,7 @@ export const createStudent = async (
         name: data.name,
         surname: data.surname,
         email: data.email || null,
-        phone: data.phone || null,
+        phone: data.phone || "",
         address: data.address,
         img: data.img || null,
         bloodType: data.bloodType,
@@ -322,7 +323,7 @@ export const updateStudent = async (
         name: data.name,
         surname: data.surname,
         email: data.email || null,
-        phone: data.phone || null,
+        phone: data.phone || "",
         address: data.address,
         img: data.img || null,
         bloodType: data.bloodType,
@@ -486,12 +487,8 @@ export const createParent = async (
         name: data.name,
         surname: data.surname,
         email: data.email || null,
-        phone: data.phone || null,
+        phone: data.phone || "",
         address: data.address,
-        img: data.img || null,
-        bloodType: data.bloodType,
-        sex: data.sex,
-        birthday: data.birthday,
       },
     });
 
@@ -529,9 +526,6 @@ export const updateParent = async (
     email: data.email || undefined,
     phone: data.phone || undefined,
     address: data.address,
-    bloodType: data.bloodType,
-    sex: data.sex,
-    birthday: data.birthday,
   },
 });
 
